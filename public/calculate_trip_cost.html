@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>Trip Cost Calculator</title>
+
+    <style>
+        * {
+            padding: 0;
+            margin: 0;
+            box-sizing: border-box;
+            font-family: Arial, Helvetica, sans-serif;
+        }
+
+        .container {
+            max-width: 1300px;
+            margin: 0 auto;
+            padding: 0 30px;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .logo,
+        nav {
+            padding: 20px 20px;
+
+        }
+
+        .logo {
+            font-size: 36px;
+        }
+
+        header a {
+            text-decoration: none;
+            font-size: 20px;
+            padding: 20px 30px;
+
+        }
+
+        header a:hover {
+            background-color: #232323;
+            color: #FFF;
+        }
+
+        main form {
+            max-width: 450px;
+            margin: 20px auto;
+            padding: 30px 20px;
+            border-radius: 12px;
+            box-shadow: rgba(0, 0, 0, 0.25) 0px 54px 55px, rgba(0, 0, 0, 0.12) 0px -12px 30px, rgba(0, 0, 0, 0.12) 0px 4px 6px, rgba(0, 0, 0, 0.17) 0px 12px 13px, rgba(0, 0, 0, 0.09) 0px -3px 5px;
+        }
+
+        h1 {
+            margin-bottom: 40px;
+            font-size: 40px;
+            text-align: center;
+
+        }
+
+        label {
+            display: block;
+            margin-bottom: 10px;
+        }
+
+        input[type="number"] {
+            width: 200px;
+            padding: 8px;
+            margin-bottom: 10px;
+        }
+
+        button {
+            padding: 10px 20px;
+            background-color: #512da8;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #311b92;
+        }
+
+        #result {
+            margin-top: 20px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+
+<body>
+    <header class="container">
+        <div>
+            <p class="logo">
+                Mapee
+            </p>
+        </div>
+        <nav>
+            <a href="maps.html">Home</a>
+
+            <a href="index.html">Logout</a>
+        </nav>
+    </header>
+    <main class="container">
+        <form action="" class="trip-cost">
+            <h1>Trip Cost Calculator</h1>
+            <h3>Total Distance of Trip (in Km): <span class="distance"></span></h3>
+            <label for="mileage">Vehicle Mileage (km/l):</label>
+            <input type="number" id="mileage" step="0.01" required><br><br>
+            <label for="fuel-cost">Cost of Fuel (per liter):</label>
+            <input type="number" id="fuel-cost" step="0.01" required><br><br>
+            <button id="calculate">Calculate Trip Cost</button>
+            <div id="result"></div>
+        </form>
+    </main>
+
+    <script>
+
+        const urlParams = new URLSearchParams(window.location.search);
+        const distanceInMiles = parseFloat(urlParams.get('distance'));
+
+        let distanceInKilometers = 0;
+
+        if (!isNaN(distanceInMiles)) {
+            distanceInKilometers = distanceInMiles * 1.60934;
+            const distanceSpan = document.querySelector('.distance');
+            distanceSpan.textContent = distanceInKilometers.toFixed(2) + ' km';
+        } else {
+            console.error('Distance parameter is not valid.');
+        }
+
+        document.getElementById("calculate").addEventListener("click", function (event) {
+            event.preventDefault();
+
+            const mileage = parseFloat(document.getElementById("mileage").value);
+            const fuelCost = parseFloat(document.getElementById("fuel-cost").value);
+
+            const tripCost = distanceInKilometers / mileage * fuelCost;
+
+            document.getElementById("result").innerText = `Trip Cost: Rs : ${tripCost.toFixed(2)}`;
+        });
+    </script>
+</body>
+
+</html>

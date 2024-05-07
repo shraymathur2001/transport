@@ -1,0 +1,322 @@
+<!-- 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weather Prediction</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f5f5f5;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .container {
+            text-align: center;
+            background-color: #fff;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            max-width: 500px;
+            width: 100%;
+            overflow: hidden;
+        }
+        input[type="text"], input[type="number"] {
+            padding: 10px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            width: calc(100% - 22px);
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #512da8;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-bottom: 10px;
+        }
+        #weather-info {
+            margin-top: 20px;
+            text-align: left;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        #weather-info p {
+            margin: 5px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Weather Prediction</h1>
+        <input type="text" id="city-input" placeholder="Enter city name">
+        <input type="number" id="hours-input" placeholder="Enter hours for prediction">
+        <button onclick="fetchWeather()">Get Weather Prediction</button>
+        <button onclick="fetchCurrentWeather()">Check Weather Now</button>
+        <a href="maps.html"><button>Back to Maps</button></a>
+        <div id="weather-info"></div>
+        
+    </div>
+
+    <script>
+
+    async function fetchWeather() {
+        const apiKey = '482675b24ebe2b418e13d593167e1ee0';
+        const city = document.getElementById('city-input').value.trim();
+        const hours = parseInt(document.getElementById('hours-input').value.trim());
+
+        // Calculate the current time rounded to the nearest hour
+        const now = new Date();
+        now.setMinutes(0);
+        now.setSeconds(0);
+        now.setMilliseconds(0);
+
+        // Calculate the start time for fetching weather data
+        const startTime = new Date(now);
+        startTime.setHours(startTime.getHours() + 1);
+
+        const url = `https://api.openweathermap.org/data/2.5/forecast?q=${city}&appid=${apiKey}&units=metric`;
+
+        try {
+            const response = await fetch(url);
+            const data = await response.json();
+
+            if (data.cod === '404') {
+                document.getElementById('weather-info').innerHTML = '<p>City not found. Please enter a valid city name.</p>';
+            } else {
+                // Find the index of the first forecast after the start time
+                let startIndex = 0;
+                for (let i = 0; i < data.list.length; i++) {
+                    const forecastTime = new Date(data.list[i].dt * 1000);
+                    if (forecastTime >= startTime) {
+                        startIndex = i;
+                        break;
+                    }
+                }
+
+                // Generate weather information for the specified hours
+                let weatherInfo = '';
+                for (let i = startIndex; i < startIndex + hours; i++) {
+                    const forecast = data.list[i];
+                    const forecastTime = new Date(forecast.dt * 1000);
+                    const formattedDate = `${forecastTime.getDate().toString().padStart(2, '0')}/${(forecastTime.getMonth() + 1).toString().padStart(2, '0')}/${forecastTime.getFullYear()}`;
+                    weatherInfo += `
+                        <p><strong>Date:</strong> ${formattedDate}</p>
+                        <p><strong>Time:</strong> ${forecastTime.toLocaleTimeString()}</p>
+                        <p><strong>Temperature:</strong> ${forecast.main.temp} °C</p>
+                        <p><strong>Weather:</strong> ${forecast.weather[0].description}</p>
+                        <hr>
+                    `;
+                }
+
+                document.getElementById('weather-info').innerHTML = weatherInfo;
+            }
+        } catch (error) {
+            console.error('Error fetching weather data:', error);
+            document.getElementById('weather-info').innerHTML = '<p>Failed to fetch weather data. Please try again later.</p>';
+        }
+    }
+
+
+        async function fetchCurrentWeather() {
+            const apiKey = '482675b24ebe2b418e13d593167e1ee0';
+            const city = document.getElementById('city-input').value.trim();
+            const url = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}&units=metric`;
+
+            try {
+                const response = await fetch(url);
+                const data = await response.json();
+
+                if (data.cod === '404') {
+                    document.getElementById('weather-info').innerHTML = '<p>City not found. Please enter a valid city name.</p>';
+                } else {
+                    const currentDateTime = new Date(data.dt * 1000); // Convert Unix timestamp to milliseconds
+            const formattedDate = `${currentDateTime.getDate().toString().padStart(2, '0')}/${(currentDateTime.getMonth() + 1).toString().padStart(2, '0')}/${currentDateTime.getFullYear()}`;
+            const weatherInfo = `
+                <h2>${data.name}, ${data.sys.country}</h2>
+                <p><strong>Date:</strong> ${formattedDate}</p>
+                <p><strong>Time:</strong> ${currentDateTime.toLocaleTimeString()}</p>
+                <p><strong>Temperature:</strong> ${data.main.temp} °C</p>
+                <p><strong>Weather:</strong> ${data.weather[0].description}</p>
+            `;
+            document.getElementById('weather-info').innerHTML = weatherInfo;
+                }
+            } catch (error) {
+                console.error('Error fetching current weather data:', error);
+                document.getElementById('weather-info').innerHTML = '<p>Failed to fetch weather data. Please try again later.</p>';
+            }
+        }
+    </script>
+</body>
+</html> -->
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weather Prediction</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f5f5f5;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .container {
+            text-align: center;
+            background-color: #fff;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            max-width: 500px;
+            width: 100%;
+            overflow: hidden;
+        }
+        input[type="text"], input[type="number"] {
+            padding: 10px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            width: calc(100% - 22px);
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #512da8;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-bottom: 10px;
+        }
+        #weather-info {
+            margin-top: 20px;
+            text-align: left;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        #weather-info p {
+            margin: 5px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Weather Prediction</h1>
+        <input type="text" id="city-input" placeholder="Enter city name">
+        <input type="number" id="hours-input" placeholder="Enter hours for prediction">
+        <button onclick="fetchWeather()">Get Weather Prediction</button>
+        <button onclick="fetchCurrentWeather()">Check Weather Now</button>
+        <a href="maps.html"><button>Back to Maps</button></a>
+        <div id="weather-info"></div>
+    </div>
+
+    <script>
+        async function fetchWeather() {
+            const apiKey = '482675b24ebe2b418e13d593167e1ee0';
+            const city = document.getElementById('city-input').value.trim();
+            const hours = parseInt(document.getElementById('hours-input').value.trim());
+
+            // Calculate the current time rounded to the nearest hour
+            const now = new Date();
+            now.setMinutes(0);
+            now.setSeconds(0);
+            now.setMilliseconds(0);
+
+            // Calculate the start time for fetching weather data
+            const startTime = new Date(now);
+            startTime.setHours(startTime.getHours() + 1);
+            startTime.setMinutes(0);
+
+            // Adjust start time to the next hour if the current time is already past the next hour
+if (now.getMinutes() > 0) {
+    startTime.setHours(startTime.getHours() + 1);
+}
+            const url = `https://api.openweathermap.org/data/2.5/forecast?q=${city}&appid=${apiKey}&units=metric`;
+
+            try {
+                const response = await fetch(url);
+                const data = await response.json();
+
+                if (data.cod === '404') {
+                    document.getElementById('weather-info').innerHTML = '<p>City not found. Please enter a valid city name.</p>';
+                } else {
+                    // Find the index of the first forecast after the start time
+                    let startIndex = 0;
+                    for (let i = 0; i < data.list.length; i++) {
+                        const forecastTime = new Date(data.list[i].dt * 1000);
+                        if (forecastTime >= startTime) {
+                            startIndex = i;
+                            break;
+                        }
+                    }
+
+                    // Generate weather information for the specified hours
+                    let weatherInfo = '';
+                    for (let i = startIndex; i < startIndex + hours; i++) {
+                        const forecast = data.list[i];
+                        const forecastTime = new Date(forecast.dt * 1000);
+                        const formattedDate = forecastTime.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata' });
+                        weatherInfo += `
+                            <p><strong>Date:</strong> ${formattedDate}</p>
+                            <p><strong>Time:</strong> ${forecastTime.toLocaleTimeString()}</p>
+                            <p><strong>Temperature:</strong> ${forecast.main.temp} °C</p>
+                            <p><strong>Weather:</strong> ${forecast.weather[0].description}</p>
+                            <hr>
+                        `;
+                    }
+
+                    document.getElementById('weather-info').innerHTML = weatherInfo;
+                }
+            } catch (error) {
+                console.error('Error fetching weather data:', error);
+                document.getElementById('weather-info').innerHTML = '<p>Failed to fetch weather data. Please try again later.</p>';
+            }
+        }
+
+        async function fetchCurrentWeather() {
+            const apiKey = '482675b24ebe2b418e13d593167e1ee0';
+            const city = document.getElementById('city-input').value.trim();
+            const url = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}&units=metric`;
+
+            try {
+                const response = await fetch(url);
+                const data = await response.json();
+
+                if (data.cod === '404') {
+                    document.getElementById('weather-info').innerHTML = '<p>City not found. Please enter a valid city name.</p>';
+                } else {
+                    const currentDateTime = new Date(data.dt * 1000);
+                    const formattedDate = currentDateTime.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata' });
+                    const weatherInfo = `
+                        <h2>${data.name}, ${data.sys.country}</h2>
+                        <p><strong>Date:</strong> ${formattedDate}</p>
+                        <p><strong>Temperature:</strong> ${data.main.temp} °C</p>
+                        <p><strong>Weather:</strong> ${data.weather[0].description}</p>
+                    `;
+                    document.getElementById('weather-info').innerHTML = weatherInfo;
+                }
+            } catch (error) {
+                console.error('Error fetching current weather data:', error);
+                document.getElementById('weather-info').innerHTML = '<p>Failed to fetch weather data. Please try again later.</p>';
+            }
+        }
+    </script>
+</body>
+</html>

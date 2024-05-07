@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+
+    <title>Modern Login Page | AsmrProg</title>
+</head>
+<body>
+    <div class="container" id="container">
+        <div class="form-container sign-up">
+            <form id="signup-form">
+                <h1>Create Account</h1>
+                <span>or use your email for registration</span>
+                <input type="text" placeholder="Name" id="signup-name" required />
+                <input type="email" placeholder="Email" id="signup-email" required />
+                <input type="text" placeholder="City" id="signup-city" required />
+                <div class="password-field">
+                    <input type="password" placeholder="Password" id="signup-password" required />
+                    <!-- Eye icon for password visibility toggle -->
+                    <span class="password-toggle" id="toggle-password">
+                        <i class="fas fa-eye" id="eye-icon"></i>
+                    </span>
+                </div>
+                <div class="password-field">
+                    <input type="password" placeholder="Confirm Password" id="confirm-password" required />
+                    <!-- Eye icon for confirm password visibility toggle -->
+                    <span class="password-toggle" id="toggle-confirm-password">
+                        <i class="fas fa-eye" id="eye-confirm-icon"></i>
+                    </span>
+                </div>
+                
+                <button type="submit">Sign Up</button>
+                <div id="signup-message"></div> <!-- Display sign-up message here -->
+            </form>
+        </div>
+        <div class="form-container sign-in">
+            <form id="signin-form">
+                <h1>Sign In</h1>
+                <span>or use your email and password</span>
+                <input type="email" placeholder="Email" id="signin-email" required />
+                <input type="password" placeholder="Password" id="signin-password" required />
+                <button type="button" id="forget-pass">Forget Your Password?</button>
+                <button type="submit">Sign In</button>
+                <div id="signin-user-message"></div>
+                <button type="button" id="admin-btn">Admin</button>
+                <div id="signin-admin"></div>
+            </form>
+        </div>
+        <div class="toggle-container">
+            
+            <div class="toggle">
+
+
+                <div class="toggle-panel toggle-left">
+                    
+                    <h1>Welcome Back!</h1>
+                    <p>Enter your personal details to use all site features</p>
+                    <button class="hidden" id="login">Sign In</button>
+                </div>
+                <div class="toggle-panel toggle-right">
+                    <h1>Road Transport Services</h1>
+                    <p>Tech-driven road revolution</p>
+                    <p>Next-gen transport redefined</p>
+                    <p>Empowering seamless journeys</p>
+                    <p>Register with your personal details</p>
+                    <button class="hidden" id="register">Sign Up</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/js/all.min.js"></script>
+    <script src="script.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const signupForm = document.getElementById("signup-form");
+            const signinForm = document.getElementById("signin-form");
+            const signupPassword = document.getElementById("signup-password");
+            const confirmPassword = document.getElementById("confirm-password");
+            const togglePassword = document.getElementById("toggle-password");
+            const toggleConfirmPassword = document.getElementById("toggle-confirm-password");
+            const signupMessage = document.getElementById("signup-message");
+            const adminBtn = document.getElementById("admin-btn");
+            const forpass = document.getElementById("forget-pass");
+            const adminsign = document.getElementById('signin-admin');
+            const usersign = document.getElementById('signin-user-message');
+
+            forpass.addEventListener("click",function() {
+                window.location.href = "forgetpassword.html";
+            });
+
+            adminBtn.addEventListener("click", function () {
+                const adminEmail = "admin@123";
+                const adminPassword = "123";
+                const email = document.getElementById("signin-email").value;
+                const password = document.getElementById("signin-password").value;
+                if (!email || !password) {
+                    signupMessage.textContent = "Please fill out all fields.";
+                    return;
+                }
+                if (email === adminEmail && password === adminPassword) {
+                    window.location.href = "admin.html"; // Redirect to admin page
+                } else {
+                    adminsign.textContent = "Invalid email or password!";
+                   // alert("Invalid email or password!");
+                }
+            });
+
+            // Toggle password visibility
+            togglePassword.addEventListener("click", function () {
+                const type = signupPassword.getAttribute("type") === "password" ? "text" : "password";
+                signupPassword.setAttribute("type", type);
+                togglePassword.classList.toggle("active");
+            });
+
+            // Toggle confirm password visibility
+            toggleConfirmPassword.addEventListener("click", function () {
+                const type = confirmPassword.getAttribute("type") === "password" ? "text" : "password";
+                confirmPassword.setAttribute("type", type);
+                toggleConfirmPassword.classList.toggle("active");
+            });
+
+            // Form submission and validation for sign-up
+            signupForm.addEventListener("submit", function (event) {
+                event.preventDefault();
+                const name = document.getElementById("signup-name").value;
+                const email = document.getElementById("signup-email").value;
+                const city =document.getElementById("signup-city").value;
+                const password = signupPassword.value;
+                const confirmPass = confirmPassword.value;
+                // Check if any field is empty
+                if (!name || !email || !password || !confirmPass) {
+                    signupMessage.textContent = "Please fill out all fields.";
+                    return;
+                }
+
+                // Validate password and confirm password
+                if (password.length < 5 || !/[A-Z]/.test(password) || !/[a-z]/.test(password) || !/\d/.test(password) || !/[!@#$%^&*(),.?":{}|<>]/.test(password)) {
+                    signupMessage.textContent = "Password must be at least 5 characters long and contain at least one uppercase letter, one lowercase letter, one special character, and one number.";
+                    return;
+                }
+
+                if (password !== confirmPass) {
+                    signupMessage.textContent = "Passwords do not match!";
+                    return;
+                }
+
+                // Proceed with form submission
+                fetch('/register', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ name, email, city , password })
+                })
+                .then(response => {
+                    if (response.ok) {
+                        signupMessage.textContent = "Sign Up Successful!";
+                        signupForm.reset();
+                    } else {
+                        throw new Error('Failed to sign up');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    signupMessage.textContent = 'Sign up using the same email already done';
+                });
+            });
+
+            // Form submission and validation for sign-in
+            signinForm.addEventListener("submit", function (event) {
+                event.preventDefault();
+                const email = document.getElementById("signin-email").value;
+                const password = document.getElementById("signin-password").value;
+
+                // Send user data to the server for sign-in
+                fetch('/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ email, password })
+                })
+                .then(response => {
+                    if (response.ok) {
+                        // Redirect to maps.html upon successful login
+                        console.log("holaaaa")
+                        window.location.href = '/maps.html';
+                    } else {
+                        // console.log("fineeennnn")
+
+                        // throw new Error('Failed to sign in');
+                        return response.json();
+
+                    }
+                })
+
+                .then(data => {
+    // Handle specific error messages returned by the server
+    if (data && data.error === 'Email does not exist') {
+        usersign.textContent = "Email does not exist";
+        //alert('Email does not exist');
+    } else if (data && data.error === 'Password is incorrect') {
+        usersign.textContent = "Password is incorrect";
+        //alert('Password is incorrect');
+    } else {
+       // alert('Sign in failed. Please check the credentials again');
+    }
+})
+                .catch(error => {
+                    console.error('Error:', error);
+                usersign.textContent = "An error occurred. Please try again later.";
+    //alert('An error occurred. Please try again later.');
+                });
+            });
+        });
+    </script>
+</body>
+</html>

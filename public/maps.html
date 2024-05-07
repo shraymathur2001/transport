@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <script src="https://api.mapbox.com/mapbox-gl-js/v2.0.0/mapbox-gl.js"></script>
+  <link href="https://api.mapbox.com/mapbox-gl-js/v2.0.0/mapbox-gl.css" rel="stylesheet" />
+  <script
+    src="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-directions/v4.1.0/mapbox-gl-directions.js"></script>
+  <link rel="stylesheet"
+    href="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-directions/v4.1.0/mapbox-gl-directions.css"
+    type="text/css" />
+
+  <title>Mapsee</title>
+
+  <style>
+    body {
+      margin: 0;
+    }
+
+    #map {
+      height: 100vh;
+      width: 100vw;
+    }
+
+    #logout-button {
+      background-color: rgb(239 68 68);
+      color: white;
+      border: none;
+      border-radius: 0.375rem;
+      padding: 8px;
+    }
+
+    #logout-button:hover {
+      cursor: pointer;
+      background-color: rgb(220 38 38);
+    }
+
+    #show-hotels,
+    #calculate-trip-cost {
+      background-color: #512da8;
+      color: white;
+      border: none;
+      border-radius: 0.375rem;
+      padding: 8px;
+    }
+
+    #show-messages {
+      background-color: #512da8;
+      color: white;
+      border: none;
+      border-radius: 0.375rem;
+      padding: 8px;
+    }
+
+    #show-weather {
+      background-color: #512da8;
+      color: white;
+      border: none;
+      border-radius: 0.375rem;
+      padding: 8px;
+    }
+
+  </style>
+</head>
+
+<body>
+  <div id="map"></div>
+  <button id="show-hotels" style="position: absolute; top: 10px; right: 120px">
+    Show Hotels
+  </button>
+
+  <button id="show-messages" style="position: absolute; top: 10px; right: 230px">
+    Show Messages
+  </button>
+
+  <button id="calculate-trip-cost" style="position: absolute; top: 10px; right: 363px">Calculate Trip Cost</button>
+
+  <button id="show-weather" style="position: absolute; top: 10px; right: 500px">
+    Show Weather
+  </button>
+
+  <button id="logout-button" style="position: absolute; top: 10px; right: 50px">
+    Logout
+  </button>
+</body>
+
+<script>
+  mapboxgl.accessToken =
+    "pk.eyJ1Ijoia2F5Y2VlYWxhbiIsImEiOiJja2s0M2VsdHExZ3RnMnNtZjMzZHpsMHhnIn0.aLG0ja17lkuaiYgJJ1gBrQ";
+
+  navigator.geolocation.getCurrentPosition(successLocation, errorLocation, {
+    enableHighAccuracy: true,
+  });
+
+  function successLocation(position) {
+    setupMap([position.coords.longitude, position.coords.latitude]);
+  }
+
+  function errorLocation() {
+    setupMap([-2.24, 53.48]);
+  }
+
+  function setupMap(center) {
+    var map = new mapboxgl.Map({
+      container: "map",
+      style: "mapbox://styles/mapbox/streets-v11",
+      center: center,
+      zoom: 14,
+    });
+
+    const nav = new mapboxgl.NavigationControl();
+    map.addControl(nav);
+
+    var directions = new MapboxDirections({
+      accessToken: mapboxgl.accessToken,
+    });
+
+    map.addControl(directions, "top-left");
+
+    var marker = new mapboxgl.Marker({
+      color: "#FF0000",
+    })
+      .setLngLat(center)
+      .addTo(map);
+ 
+    navigator.geolocation.watchPosition(function (position) {
+      var lngLat = [position.coords.longitude, position.coords.latitude];
+      marker.setLngLat(lngLat);
+    });
+
+    document.getElementById("logout-button").addEventListener("click", function () {
+      window.location.href = "index.html";
+    });
+
+    document.getElementById("show-hotels").addEventListener("click", function () {
+      window.location.href = "indexQ6.html";
+    });
+
+    document.getElementById("show-messages").addEventListener("click", function () {
+      window.location.href = "msgfromadmin.html";
+    });
+
+    document.getElementById("show-weather").addEventListener("click", function () {
+      window.location.href = "weather.html";
+    });
+
+    var formattedDistance;
+
+    function getDistance() {
+      var elements = document.getElementsByClassName("mapbox-directions-route-summary");
+
+      for (var i = 0; i < elements.length; i++) {
+        var h1Tag = elements[i].getElementsByTagName("h1")[0];
+
+        var numberPart = parseFloat(h1Tag.textContent);
+        formattedDistance = numberPart.toFixed(2);
+
+        console.log(formattedDistance);
+      }
+    }
+
+    document.getElementById("calculate-trip-cost").addEventListener("click", function () {
+      getDistance();
+      if (formattedDistance) {
+        window.location.href = `calculate_trip_cost.html?distance=${formattedDistance}`;
+      } else {
+        alert("Please select a trip first.");
+      }
+
+    });
+
+
+  }
+</script>
+
+</html>
